@@ -1,0 +1,8 @@
+jupyter
+pytorch
+torchvision
+torchaudio
+numpy
+matplotlib
+torchsummary
+wandb
