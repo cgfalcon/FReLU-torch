@@ -126,6 +126,7 @@ class BasicTrainer(object):
             print(
                 f'\tLoss => Train loss: {avg_train_loss:.2f}, Test loss: {avg_val_loss:.2f}, Train Acc: {avg_train_acc:.2f}, Test Acc: {avg_val_acc:.2f}')
 
+        self.model = model
         self.train_summary = {
             'train_losses': train_losses,
             'val_losses': val_losses,
@@ -136,3 +137,6 @@ class BasicTrainer(object):
 
     def get_train_summary(self):
         return self.train_summary
+
+    def get_model(self):
+        return self.model
