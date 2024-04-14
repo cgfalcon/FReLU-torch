@@ -8,7 +8,9 @@ from src.models import *
 
 architectures = {
     'SimpleNet': SimpleNet,
-    'VGG11': VGG11Net,
+    'VGG11Net': VGG11Net,
+    'SimpleNet3D': SimpleNet3D,
+    'VGG11Net3D': VGG11Net3D,
 }
 
 

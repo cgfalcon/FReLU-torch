@@ -20,7 +20,7 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'model': 'SimpleBasicReLUModel',
+        'architecture': 'SimpleNet3D',
         'dataset': 'CIFAR10',
 
         # Optimizer
@@ -33,6 +33,11 @@ def run_experiment():
 
         # Model params
         'model_args': {
+            # Activation Function
+            'af_name': 'ReLU',
+            'af_params': {
+                'inplace': True
+            }
         }
     }
 

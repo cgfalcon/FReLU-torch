@@ -110,10 +110,12 @@ class BaseExperiment(object):
 
         model_args = self.exper_configs['model_args']
 
+        epochs = self.exper_configs['epochs']
+
         trainer = BasicTrainer(self.arch_name, self.device)
 
         try:
-            trainer.train_model(model_args, self.train_loader, self.test_loader, max_epoc=10, lr=self.exper_configs['lr'],
+            trainer.train_model(model_args, self.train_loader, self.test_loader, max_epoc=epochs, lr=self.exper_configs['lr'],
                                 momentum=self.exper_configs['momentum'])
             wandb.finish()
         except Exception as e:

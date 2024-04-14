@@ -20,11 +20,11 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'model': 'VGG11FRelu',
+        'architecture': 'VGG11Net',
         'dataset': 'MINST',
 
         # Optimizer
-        'lr': 0.1,
+        'lr': 0.01,
         'momentum': 0.9,
         'epochs': 10,
 
@@ -33,7 +33,12 @@ def run_experiment():
 
         # Model params
         'model_args': {
-            'frelu_init': -0.3
+            # Activation Function
+            'af_name': 'FReLU',
+            'af_params': {
+                'frelu_init': -0.3,
+                'inplace': True
+            }
         }
     }
 

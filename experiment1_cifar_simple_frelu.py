@@ -20,20 +20,25 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'model': 'SimpleFReLUModel',
+        'architecture': 'SimpleNet3D',
         'dataset': 'CIFAR10',
 
         # Optimizer
         'lr': 0.1,
         'momentum': 0.9,
-        'epochs': 10,
+        'epochs': 50,
 
         # Dataset
         'batch_size': 500,
 
         # Model params
         'model_args': {
-            'frelu_init': 0.3
+            # Activation Function
+            'af_name': 'FReLU',
+            'af_params': {
+                'frelu_init': -0.3,
+                'inplace': True
+            }
         }
     }
 

@@ -13,12 +13,14 @@ import src
 import importlib
 
 from src import *
+
 from baseexperiment import BaseExperiment
 
 def run_experiment():
+
     exper_configs = {
         # Context
-        'model': 'SimpleFReLUModel',
+        'architecture': 'SimpleNet',
         'dataset': 'MINST',
 
         # Optimizer
@@ -29,15 +31,19 @@ def run_experiment():
         # Dataset
         'batch_size': 500,
 
-        # Model Params
+        # Model params
         'model_args': {
-            'frelu_init': 1
+            # Activation Function
+            'af_name': 'ReLU',
+            'af_params': {
+                'inplace': True
+            }
+
         }
     }
 
     expr = BaseExperiment(exper_configs=exper_configs)
     expr.run_experiment()
-
 
 if __name__ == '__main__':
     run_experiment()

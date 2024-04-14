@@ -9,7 +9,8 @@ class AFFactory():
     def __init__(self):
         self.afs = {
             'FReLU': FReLU,
-            'ELU': nn.ELU
+            'ELU': nn.ELU,
+            'ReLU': nn.ReLU
         }
 
     def get_activation(self, af_name, af_params):
