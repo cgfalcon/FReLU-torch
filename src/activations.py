@@ -3,6 +3,21 @@ import torch
 import torch.nn.functional as F
 
 
+class AFFactory():
+    "An activation function factory"
+
+    def __init__(self):
+        self.afs = {
+            'FReLU': FReLU,
+            'ELU': nn.ELU
+        }
+
+    def get_activation(self, af_name, af_params):
+        if af_name not in self.afs:
+            raise KeyError('Unknown activation function: {}'.format(af_name))
+
+        return self.afs[af_name](**af_params)
+
 class FReLU(nn.Module):
 
     def __init__(self, frelu_init = 1.0, inplace = False):

@@ -20,7 +20,7 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'model': 'SimpleFReLUModel',
+        'model': 'VGG11',
         'dataset': 'MINST',
 
         # Optimizer
@@ -32,9 +32,7 @@ def run_experiment():
         'batch_size': 500,
 
         # Model params
-        'model_args': {
-            'frelu_init': 0.3
-        }
+        'model_args': { }
     }
 
     expr = BaseExperiment(exper_configs=exper_configs)

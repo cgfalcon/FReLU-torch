@@ -6,21 +6,21 @@ import wandb
 
 from src.models import *
 
-models = {
-    'SimpleFReLUModel': SimpleFReLUModel,
-    'SimpleBasicReLUModel': SimpleBasicReLUModel
+architectures = {
+    'SimpleNet': SimpleNet,
+    'VGG11': VGG11Net,
 }
 
 
 class BasicTrainer(object):
 
-    def __init__(self, model_name, device):
+    def __init__(self, arch_name, device):
         super().__init__()
 
-        if model_name not in models.keys():
-            raise ValueError('Unknown model: {}'.format(model_name))
+        if arch_name not in architectures.keys():
+            raise ValueError('Unknown model: {}'.format(arch_name))
 
-        self.model_name = model_name
+        self.arch_name = arch_name
 
         self.device = device
         self.train_summary = {}
@@ -29,8 +29,8 @@ class BasicTrainer(object):
     def train_model(self, model_args, train_dataloader, val_dataloader, max_epoc = 20, lr = 0.1, momentum = 0.9):
         """Training loop for any model"""
 
-        model = models[self.model_name](**model_args)
-        print(f'Model {self.model_name} loaded, {model}')
+        model = architectures[self.arch_name](**model_args)
+        print(f'Model {self.arch_name} loaded, {model}')
         # Move model to device
         model.to(self.device)
 

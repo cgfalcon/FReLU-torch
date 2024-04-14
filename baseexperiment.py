@@ -22,8 +22,8 @@ class BaseExperiment(object):
         super(BaseExperiment, self).__init__()
         print(f'Initializing experiment')
 
-
-        self.model_name = exper_configs['model']
+        self.arch_name = exper_configs['architecture']
+        self.af_name = exper_configs['model_args']['af_name']
         self.dataset_name = exper_configs['dataset']
         self.exper_configs = exper_configs
         self.batch_size = exper_configs['batch_size']
@@ -47,14 +47,14 @@ class BaseExperiment(object):
         if dataset_name == 'MINST':
             train = torchvision.datasets.MNIST(root='.', train=True, download=True, transform=img_transforms)
             test = torchvision.datasets.MNIST(root='.', train=False, download=True, transform=img_transforms)
+
+            if subset_size is not None:
+                train = self.subset_of_minst(train, subset_size)
         elif dataset_name == 'CIFAR10':
             train = torchvision.datasets.CIFAR10(root='.', train=True, download=True, transform=img_transforms)
             test = torchvision.datasets.CIFAR10(root='.', train=False, download=True, transform=img_transforms)
         else:
             raise ValueError('Unknown dataset name: {}.'.format(dataset_name))
-
-        if subset_size is not None:
-            train = self.subset_of_minst(train, subset_size)
 
         self.train_loader = torch.utils.data.DataLoader(train, batch_size=self.batch_size, shuffle=True)
         self.test_loader = torch.utils.data.DataLoader(test,
@@ -96,7 +96,7 @@ class BaseExperiment(object):
 
         expr_key = datetime.now().strftime('%Y%m%d%H%M')
 
-        expr_name = f"{self.dataset_name}-{self.model_name}-{expr_key}"
+        expr_name = f"{self.dataset_name}-{self.arch_name}-{self.af_name}-{expr_key}"
         print(f'\tExperiment[{expr_name}] is running')
 
 
@@ -110,7 +110,7 @@ class BaseExperiment(object):
 
         model_args = self.exper_configs['model_args']
 
-        trainer = BasicTrainer(self.model_name, self.device)
+        trainer = BasicTrainer(self.arch_name, self.device)
 
         try:
             trainer.train_model(model_args, self.train_loader, self.test_loader, max_epoc=10, lr=self.exper_configs['lr'],
