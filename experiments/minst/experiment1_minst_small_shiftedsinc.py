@@ -7,13 +7,24 @@ def run_experiment():
         'architecture': 'SmallNet',
         'dataset': 'MINST',
 
-        # Optimizer
-        'lr': 0.0001,
-        'epochs': 10,
-        'optimizer': 'ADAM', # 'SGD' or 'ADAM
+        'trainer_args': {
+            'trainer': 'KFoldTrainer',
 
-        # Dataset
-        'batch_size': 500,
+            # Kfold
+            'k_n': 2,
+
+            # Optimizer
+            'optimizer': 'ADAM',
+            'lr': 0.0001,
+            'momentum': 0.9,
+            'epochs': 10,
+
+            # Use 20% of train dataset as validation
+            'val_ratio': 0.2,
+
+            # Dataset
+            'batch_size': 500,
+        },
 
         # Model params
         'model_args': {

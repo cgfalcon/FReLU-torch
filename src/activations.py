@@ -13,7 +13,10 @@ class AFFactory():
             'ReLU': nn.ReLU,
             'LeakyADA': LeakyADA,
             'ShiftedSincUnit': ShiftedSincUnit,
-            'GCU': GCU
+            'GCU': GCU,
+            'ADA': ADA,
+            'Swish': Swish,
+            'Sigmoid': nn.Sigmoid
         }
 
     def get_activation(self, af_name, af_params):
@@ -74,3 +77,20 @@ class GCU(nn.Module):
     def forward(self, x):
         return x * torch.cos(x)
 
+class ADA(nn.Module):
+
+    def __init__(self, alpha=0.5):
+        super(ADA, self).__init__()
+        self.alpha = alpha
+
+    def forward(self, x):
+        return torch.maximum(x, torch.tensor(0.)) * torch.exp(-x * self.alpha)
+
+class Swish(nn.Module):
+
+    def __init__(self, alpha=0.5):
+        super(Swish, self).__init__()
+        self.alpha = alpha
+
+    def forward(self, x):
+        return x * torch.sigmoid(self.alpha * x)
