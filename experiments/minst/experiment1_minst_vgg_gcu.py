@@ -4,13 +4,14 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'SmallNet3D',
-        'dataset': 'CIFAR10',
+        'architecture': 'VGG11Net',
+        'dataset': 'MINST',
 
         # Optimizer
-        'lr': 0.1,
+        'lr': 0.001,
         'momentum': 0.9,
-        'epochs': 50,
+        'epochs': 10,
+        'optimizer': 'ADAM', # 'SGD' or 'ADAM
 
         # Dataset
         'batch_size': 500,
@@ -18,9 +19,8 @@ def run_experiment():
         # Model params
         'model_args': {
             # Activation Function
-            'af_name': 'ELU',
+            'af_name': 'GCU',
             'af_params': {
-                'inplace': True
             }
         }
     }

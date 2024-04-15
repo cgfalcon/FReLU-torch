@@ -1,20 +1,4 @@
-
-import numpy as np
-import matplotlib.pyplot as plt
-import torchvision
-from torchvision import datasets, transforms
-import torch
-from torch.utils.data import Subset
-import torch.nn as nn
-
-import wandb
-
-import src
-import importlib
-
-from src import *
-
-from baseexperiment import BaseExperiment
+from src.baseexperiment import BaseExperiment
 
 def run_experiment():
 
@@ -23,13 +7,24 @@ def run_experiment():
         'architecture': 'SmallNet',
         'dataset': 'MINST',
 
-        # Optimizer
-        'lr': 0.1,
-        'momentum': 0.9,
-        'epochs': 10,
+        'trainer_args': {
+            'trainer': 'KFoldTrainer',
 
-        # Dataset
-        'batch_size': 500,
+            # Kfold
+            'k_n': 2,
+
+            # Optimizer
+            'optimizer': 'SGD',
+            'lr': 0.1,
+            'momentum': 0.9,
+            'epochs': 10,
+
+            # Use 20% of train dataset as validation
+            'val_ratio': 0.2,
+
+            # Dataset
+            'batch_size': 500,
+        },
 
         # Model params
         'model_args': {

@@ -5,7 +5,6 @@ import torch.nn.functional as F
 from src.activations import FReLU, AFFactory
 import numpy
 
-
 affactory = AFFactory()
 
 class SimpleNet(nn.Module):

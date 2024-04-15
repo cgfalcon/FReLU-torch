@@ -1,20 +1,4 @@
-
-import numpy as np
-import matplotlib.pyplot as plt
-import torchvision
-from torchvision import datasets, transforms
-import torch
-from torch.utils.data import Subset
-import torch.nn as nn
-
-import wandb
-
-import src
-import importlib
-
-from src import *
-
-from baseexperiment import BaseExperiment
+from src.baseexperiment import BaseExperiment
 
 def run_experiment():
 

@@ -26,9 +26,9 @@ class BaseExperiment(object):
         self.af_name = exper_configs['model_args']['af_name']
         self.dataset_name = exper_configs['dataset']
         self.exper_configs = exper_configs
-        self.batch_size = exper_configs['batch_size']
-        self.optimizer_name = exper_configs['optimizer']
         self.subset_size = None if 'subset_size' not in exper_configs else exper_configs['subset_size']
+
+        self.trainer_args = exper_configs['trainer_args']
 
         # Load dataset
         self.train_loader = None
@@ -46,26 +46,20 @@ class BaseExperiment(object):
         # Download dataset
         print(f'\tLoading {dataset_name}')
         if dataset_name == 'MINST':
-            train = torchvision.datasets.MNIST(root='.', train=True, download=True, transform=img_transforms)
-            test = torchvision.datasets.MNIST(root='.', train=False, download=True, transform=img_transforms)
+            self.train = torchvision.datasets.MNIST(root='.', train=True, download=True, transform=img_transforms)
+            self.test = torchvision.datasets.MNIST(root='.', train=False, download=True, transform=img_transforms)
 
             if subset_size is not None:
-                train = self.subset_of_minst(train, subset_size)
+                self.train = self.subset_of_minst(self.train, subset_size)
         elif dataset_name == 'CIFAR10':
-            train = torchvision.datasets.CIFAR10(root='.', train=True, download=True, transform=img_transforms)
-            test = torchvision.datasets.CIFAR10(root='.', train=False, download=True, transform=img_transforms)
+            self.train = torchvision.datasets.CIFAR10(root='.', train=True, download=True, transform=img_transforms)
+            self.test = torchvision.datasets.CIFAR10(root='.', train=False, download=True, transform=img_transforms)
         elif dataset_name == 'CIFAR100':
-            train = torchvision.datasets.CIFAR100(root='.', train=True, download=True, transform=img_transforms)
-            test = torchvision.datasets.CIFAR100(root='.', train=False, download=True, transform=img_transforms)
+            self.train = torchvision.datasets.CIFAR100(root='.', train=True, download=True, transform=img_transforms)
+            self.test = torchvision.datasets.CIFAR100(root='.', train=False, download=True, transform=img_transforms)
         else:
             raise ValueError('Unknown dataset name: {}.'.format(dataset_name))
 
-        self.train_loader = torch.utils.data.DataLoader(train, batch_size=self.batch_size, shuffle=True)
-        self.test_loader = torch.utils.data.DataLoader(test,
-                                                  batch_size=self.batch_size, shuffle=False)
-
-        print(f'\tTraining set {len(self.train_loader)} has instances')
-        print(f'\tTest_loader set {len(self.test_loader)} has instances')
 
     def subset_of_minst(self, dataset, subset_size=500):
         """Create subset for given dataset"""
@@ -100,8 +94,18 @@ class BaseExperiment(object):
 
         expr_key = datetime.now().strftime('%Y%m%d%H%M')
 
-        expr_name = f"{self.dataset_name}-{self.arch_name}-{self.af_name}-{expr_key}"
+        trainer_name = self.trainer_args['trainer']
+        tr_key = 'BT'
+        if trainer_name == 'KFoldTrainer':
+            trainer = KFoldTrainer(self.arch_name, self.device, self.trainer_args)
+            tr_key = '[KF]'
+        else:
+            trainer = BasicTrainer(self.arch_name, self.device, self.trainer_args)
+            tr_key = '[BT]'
+
+        expr_name = f"{tr_key}-{self.dataset_name}-{self.arch_name}-{self.af_name}-{expr_key}"
         print(f'\tExperiment[{expr_name}] is running')
+
 
 
         wandb.init(
@@ -112,17 +116,22 @@ class BaseExperiment(object):
             # Track hyperparameters and run metadata
             config={**self.exper_configs})
 
+        wandb.define_metric("epoch")
+        wandb.define_metric('training/train_loss', step_metric="epoch")
+        wandb.define_metric('training/train_acc', step_metric="epoch")
+        wandb.define_metric('training/val_loss', step_metric="epoch")
+        wandb.define_metric('training/val_acc', step_metric="epoch")
+        wandb.define_metric('testing/test_loss', step_metric="epoch")
+        wandb.define_metric('testing/test_acc', step_metric="epoch")
+
+
         model_args = self.exper_configs['model_args']
-        epochs = self.exper_configs['epochs']
-
-        trainer = BasicTrainer(self.arch_name, self.device, self.optimizer_name)
-
-        momentum = self.exper_configs['momentum'] if 'momentum' in self.exper_configs else None
-        weight_decay = self.exper_configs['weight_decay'] if 'weight_decay' in self.exper_configs else 0.0
 
         # try:
-        trainer.train_model(model_args, self.train_loader, self.test_loader, max_epoc=epochs, lr=self.exper_configs['lr'],
-                                momentum=momentum, weight_decay=weight_decay)
+        trainer.train_model(model_args, self.train)
+
+        trainer.test_model(self.test)
+
         wandb.finish()
         # except Exception as e:
         #     print(f'Experiment failed with exception, \n {e}')
