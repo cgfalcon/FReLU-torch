@@ -10,7 +10,8 @@ class AFFactory():
         self.afs = {
             'FReLU': FReLU,
             'ELU': nn.ELU,
-            'ReLU': nn.ReLU
+            'ReLU': nn.ReLU,
+            'LeakyADA': LeakyADA
         }
 
     def get_activation(self, af_name, af_params):
@@ -34,4 +35,20 @@ class FReLU(nn.Module):
 
     def extra_repr(self) -> str:
         repr = f'inplace={"True" if self.inplace else ""}, bias=({self.b.shape})'
+        return repr
+
+
+class LeakyADA(nn.Module):
+    def __init__(self, alpha=0.5, leak=0.01):
+        super(LeakyADA, self).__init__()
+        self.alpha = alpha
+        self.leak = leak
+
+    def forward(self, x):
+        return self.leak * torch.min(x, torch.tensor(0.0)) + torch.max(x, torch.tensor(0.0)) * torch.exp(
+            -x * self.alpha)
+
+
+    def extra_repr(self) -> str:
+        repr = f'leak={self.leak}, alpha={self.alpha}'
         return repr

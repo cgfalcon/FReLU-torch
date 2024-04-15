@@ -20,7 +20,7 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'SimpleNet3D',
+        'architecture': 'SmallNet3D',
         'dataset': 'CIFAR10',
 
         # Optimizer

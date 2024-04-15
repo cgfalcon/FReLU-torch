@@ -20,11 +20,11 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'SimpleNet3D',
+        'architecture': 'VGG11Net3D',
         'dataset': 'CIFAR10',
 
         # Optimizer
-        'lr': 0.1,
+        'lr': 0.01,
         'momentum': 0.9,
         'epochs': 50,
 
@@ -34,8 +34,9 @@ def run_experiment():
         # Model params
         'model_args': {
             # Activation Function
-            'af_name': 'ReLU',
+            'af_name': 'FReLU',
             'af_params': {
+                'frelu_init': -0.1,
                 'inplace': True
             }
         }

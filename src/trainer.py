@@ -11,6 +11,8 @@ architectures = {
     'VGG11Net': VGG11Net,
     'SimpleNet3D': SimpleNet3D,
     'VGG11Net3D': VGG11Net3D,
+    'SmallNet': SmallNet,
+    'SmallNet3D': SmallNet3D
 }
 
 

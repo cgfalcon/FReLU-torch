@@ -20,11 +20,11 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'SimpleNet3D',
+        'architecture': 'VGG11Net3D',
         'dataset': 'CIFAR10',
 
         # Optimizer
-        'lr': 0.1,
+        'lr': 0.01,
         'momentum': 0.9,
         'epochs': 50,
 

@@ -20,7 +20,7 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'model': 'VGG11',
+        'architecture': 'VGG11Net',
         'dataset': 'MINST',
 
         # Optimizer
@@ -32,7 +32,13 @@ def run_experiment():
         'batch_size': 500,
 
         # Model params
-        'model_args': { }
+        'model_args': {
+            # Activation Function
+            'af_name': 'ReLU',
+            'af_params': {
+                'inplace': True
+            }
+        }
     }
 
     expr = BaseExperiment(exper_configs=exper_configs)
