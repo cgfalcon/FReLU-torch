@@ -10,8 +10,8 @@ def run_experiment():
         'trainer_args': {
             'trainer': 'KFoldTrainer',
 
-            # 'clip_gradients': True,
-            # 'max_gradients': 3,
+            'clip_gradients': True,
+            'max_gradients': 3,
 
             # Kfold
             'k_n': 2,
@@ -20,6 +20,7 @@ def run_experiment():
             'optimizer': 'SGD',
             'lr': 0.01,
             'momentum': 0.9,
+            'weight_decay': 0.00001,
             'epochs': 10,
 
             # Use 20% of train dataset as validation
@@ -32,10 +33,8 @@ def run_experiment():
         # Model params
         'model_args': {
             # Activation Function
-            'af_name': 'FReLU',
+            'af_name': 'ShiftedQuadraticUnit',
             'af_params': {
-                'frelu_init': -0.3,
-                'inplace': True
             }
         }
     }

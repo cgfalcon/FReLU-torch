@@ -7,13 +7,27 @@ def run_experiment():
         'architecture': 'VGG11Net',
         'dataset': 'MINST',
 
-        # Optimizer
-        'lr': 0.1,
-        'momentum': 0.9,
-        'epochs': 10,
+        'trainer_args': {
+            'trainer': 'KFoldTrainer',
 
-        # Dataset
-        'batch_size': 500,
+            # 'clip_gradients': True,
+            # 'max_gradients': 3,
+
+            # Kfold
+            'k_n': 2,
+
+            # Optimizer
+            'optimizer': 'SGD',
+            'lr': 0.1,
+            'momentum': 0.9,
+            'epochs': 10,
+
+            # Use 20% of train dataset as validation
+            'val_ratio': 0.2,
+
+            # Dataset
+            'batch_size': 500,
+        },
 
         # Model params
         'model_args': {

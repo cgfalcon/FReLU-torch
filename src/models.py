@@ -344,3 +344,48 @@ class OsciAFNet3D(nn.Module):
         x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
+
+
+class LeNet5(nn.Module):
+    def __init__(self, af_name, af_params, num_classes=10):
+        super(LeNet5, self).__init__()
+
+        A_F = affactory.get_activation(af_name, af_params)
+
+        self.conv1 = nn.Conv2d(1, 6, kernel_size=5)
+        self.conv2 = nn.Conv2d(6, 16, kernel_size=5)
+        self.fc1 = nn.Linear(16*5*5, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, num_classes)
+        self.activation = A_F  #
+
+    def forward(self, x):
+        x = nn.functional.avg_pool2d(self.activation(self.conv1(x)), kernel_size=2, stride=2)
+        x = nn.functional.avg_pool2d(self.activation(self.conv2(x)), kernel_size=2, stride=2)
+        x = torch.flatten(x, 1)
+        x = self.activation(self.fc1(x))
+        x = self.activation(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+class LeNet53D(nn.Module):
+    def __init__(self, af_name, af_params, num_classes=10):
+        super(LeNet53D, self).__init__()
+
+        A_F = affactory.get_activation(af_name, af_params)
+
+        self.conv1 = nn.Conv2d(3, 6, kernel_size=5)
+        self.conv2 = nn.Conv2d(6, 16, kernel_size=5)
+        self.fc1 = nn.Linear(16*5*5, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, num_classes)
+        self.activation = A_F  #
+
+    def forward(self, x):
+        x = nn.functional.avg_pool2d(self.activation(self.conv1(x)), kernel_size=2, stride=2)
+        x = nn.functional.avg_pool2d(self.activation(self.conv2(x)), kernel_size=2, stride=2)
+        x = torch.flatten(x, 1)
+        x = self.activation(self.fc1(x))
+        x = self.activation(self.fc2(x))
+        x = self.fc3(x)
+        return x

@@ -13,6 +13,7 @@ class AFFactory():
             'ReLU': nn.ReLU,
             'LeakyADA': LeakyADA,
             'ShiftedSincUnit': ShiftedSincUnit,
+            'ShiftedQuadraticUnit': ShiftedQuadraticUnit,
             'GCU': GCU,
             'ADA': ADA,
             'Swish': Swish,
@@ -94,3 +95,11 @@ class Swish(nn.Module):
 
     def forward(self, x):
         return x * torch.sigmoid(self.alpha * x)
+
+class ShiftedQuadraticUnit(nn.Module):
+
+    def __init__(self):
+        super(ShiftedQuadraticUnit, self).__init__()
+
+    def forward(self, x):
+        return x ** 2 + x

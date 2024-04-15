@@ -17,7 +17,6 @@ def run_experiment():
             'optimizer': 'SGD',
             'lr': 0.01,
             'momentum': 0.9,
-            'weight_decay': 0.0001,
             'epochs': 50,
 
             # Use 20% of train dataset as validation
@@ -32,7 +31,7 @@ def run_experiment():
             # Activation Function
             'af_name': 'FReLU',
             'af_params': {
-                'frelu_init': -0.1,
+                'frelu_init': -0.39,
                 'inplace': True
             }
         }
