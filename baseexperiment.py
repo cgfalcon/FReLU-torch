@@ -27,6 +27,7 @@ class BaseExperiment(object):
         self.dataset_name = exper_configs['dataset']
         self.exper_configs = exper_configs
         self.batch_size = exper_configs['batch_size']
+        self.optimizer_name = exper_configs['optimizer']
         self.subset_size = None if 'subset_size' not in exper_configs else exper_configs['subset_size']
 
         # Load dataset
@@ -53,6 +54,9 @@ class BaseExperiment(object):
         elif dataset_name == 'CIFAR10':
             train = torchvision.datasets.CIFAR10(root='.', train=True, download=True, transform=img_transforms)
             test = torchvision.datasets.CIFAR10(root='.', train=False, download=True, transform=img_transforms)
+        elif dataset_name == 'CIFAR100':
+            train = torchvision.datasets.CIFAR100(root='.', train=True, download=True, transform=img_transforms)
+            test = torchvision.datasets.CIFAR100(root='.', train=False, download=True, transform=img_transforms)
         else:
             raise ValueError('Unknown dataset name: {}.'.format(dataset_name))
 
@@ -109,14 +113,16 @@ class BaseExperiment(object):
             config={**self.exper_configs})
 
         model_args = self.exper_configs['model_args']
-
         epochs = self.exper_configs['epochs']
 
-        trainer = BasicTrainer(self.arch_name, self.device)
+        trainer = BasicTrainer(self.arch_name, self.device, self.optimizer_name)
+
+        momentum = self.exper_configs['momentum'] if 'momentum' in self.exper_configs else None
+        weight_decay = self.exper_configs['weight_decay'] if 'weight_decay' in self.exper_configs else 0.0
 
         # try:
         trainer.train_model(model_args, self.train_loader, self.test_loader, max_epoc=epochs, lr=self.exper_configs['lr'],
-                                momentum=self.exper_configs['momentum'])
+                                momentum=momentum, weight_decay=weight_decay)
         wandb.finish()
         # except Exception as e:
         #     print(f'Experiment failed with exception, \n {e}')

@@ -11,7 +11,9 @@ class AFFactory():
             'FReLU': FReLU,
             'ELU': nn.ELU,
             'ReLU': nn.ReLU,
-            'LeakyADA': LeakyADA
+            'LeakyADA': LeakyADA,
+            'ShiftedSincUnit': ShiftedSincUnit,
+            'GCU': GCU
         }
 
     def get_activation(self, af_name, af_params):
@@ -52,3 +54,23 @@ class LeakyADA(nn.Module):
     def extra_repr(self) -> str:
         repr = f'leak={self.leak}, alpha={self.alpha}'
         return repr
+
+class ShiftedSincUnit(nn.Module):
+
+    def __init__(self):
+        super(ShiftedSincUnit, self).__init__()
+
+    def sinc(self, z):
+        return torch.where(z == 0, 1, torch.sin(z) / z)
+
+    def forward(self, x):
+        return torch.pi * self.sinc(x - torch.pi)
+
+class GCU(nn.Module):
+
+    def __init__(self):
+        super(GCU, self).__init__()
+
+    def forward(self, x):
+        return x * torch.cos(x)
+

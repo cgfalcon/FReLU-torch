@@ -301,3 +301,47 @@ class VGG11Net3D(nn.Module):
         x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
+
+
+
+class OsciAFNet3D(nn.Module):
+    """VGG11Net with 1 input channel"""
+
+    def __init__(self, af_name, af_params):
+        super(OsciAFNet3D, self).__init__()
+
+        print(f'OsciAFNet3D initialized with params: \n {af_params}')
+
+        A_F = affactory.get_activation(af_name, af_params)
+
+        self.convs_layers = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            A_F,
+
+            nn.Conv2d(32, 32, kernel_size=3),
+            A_F,
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=0.2),
+
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            A_F,
+
+            nn.Conv2d(64, 64, kernel_size=3),
+            A_F,
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=0.2),
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(2304, 512),
+            A_F,
+            nn.Dropout(p=0.5),
+
+            nn.Linear(512, 10),
+            A_F
+        )
+
+    def forward(self, x):
+        x = self.convs_layers(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x

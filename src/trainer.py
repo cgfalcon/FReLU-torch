@@ -12,25 +12,27 @@ architectures = {
     'SimpleNet3D': SimpleNet3D,
     'VGG11Net3D': VGG11Net3D,
     'SmallNet': SmallNet,
-    'SmallNet3D': SmallNet3D
+    'SmallNet3D': SmallNet3D,
+    'OsciAFNet3D': OsciAFNet3D
 }
 
 
 class BasicTrainer(object):
 
-    def __init__(self, arch_name, device):
+    def __init__(self, arch_name, device, optimizer_name = 'SGD'):
         super().__init__()
 
         if arch_name not in architectures.keys():
             raise ValueError('Unknown model: {}'.format(arch_name))
 
         self.arch_name = arch_name
+        self.optimizer_name = optimizer_name
 
         self.device = device
         self.train_summary = {}
 
 
-    def train_model(self, model_args, train_dataloader, val_dataloader, max_epoc = 20, lr = 0.1, momentum = 0.9):
+    def train_model(self, model_args, train_dataloader, val_dataloader, max_epoc = 20, lr = 0.1, momentum = 0.9, weight_decay = 0):
         """Training loop for any model"""
 
         model = architectures[self.arch_name](**model_args)
@@ -49,7 +51,10 @@ class BasicTrainer(object):
 
         # Initialize loss function and optimizer
         loss_fn = nn.CrossEntropyLoss()
-        optimizer = torch.optim.SGD(model.parameters(), momentum=momentum, lr=lr)
+        if (self.optimizer_name == 'SGD'):
+            optimizer = torch.optim.SGD(model.parameters(), momentum=momentum, lr=lr, weight_decay=weight_decay)
+        else:
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
         for epoch in range(max_epoc):
             print(f'[Epoch {epoch}]')
