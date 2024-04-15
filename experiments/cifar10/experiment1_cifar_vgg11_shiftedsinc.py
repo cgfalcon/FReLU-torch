@@ -7,14 +7,25 @@ def run_experiment():
         'architecture': 'VGG11Net3D',
         'dataset': 'CIFAR10',
 
-        # Optimizer
-        'lr': 0.0001,
-        'epochs': 50,
-        'optimizer': 'ADAM', # 'SGD' or 'ADAM
-        'weight_decay': 0.00001,
+        'trainer_args': {
+            'trainer': 'BasicTrainer',
 
-        # Dataset
-        'batch_size': 35,
+            # Kfold
+            'k_n': 2,
+
+            # Optimizer
+            'optimizer': 'ADAM',
+            'lr': 0.001,
+            'momentum': 0.9,
+            'weight_decay': 0.00001,
+            'epochs': 50,
+
+            # Use 20% of train dataset as validation
+            'val_ratio': 0.2,
+
+            # Dataset
+            'batch_size': 500,
+        },
 
         # Model params
         'model_args': {

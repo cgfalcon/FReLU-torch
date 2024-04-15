@@ -47,6 +47,9 @@ class BasicTrainer(object):
         self.momentum = momentum
         self.weight_decay = weight_decay
 
+        self.clip_gradients = False if 'clip_gradients' not in self.trainer_args else self.trainer_args['clip_gradients']
+        self.max_gradients = 5 if 'max_gradients' not in self.trainer_args else self.trainer_args['max_gradients']
+
         # Initialize loss function and optimizer
         self.loss_fn = nn.CrossEntropyLoss()
 
@@ -178,6 +181,9 @@ class BasicTrainer(object):
             # loss
             loss = loss_fn(outputs, labels)
             loss.backward()
+
+            if self.clip_gradients:
+                nn.utils.clip_grad_norm_(model.parameters(), self.max_gradients)
 
             # update parameters
             optimizer.step()
