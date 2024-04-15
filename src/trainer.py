@@ -6,31 +6,37 @@ import wandb
 
 from src.models import *
 
-models = {
-    'SimpleFReLUModel': SimpleFReLUModel,
-    'SimpleBasicReLUModel': SimpleBasicReLUModel
+architectures = {
+    'SimpleNet': SimpleNet,
+    'VGG11Net': VGG11Net,
+    'SimpleNet3D': SimpleNet3D,
+    'VGG11Net3D': VGG11Net3D,
+    'SmallNet': SmallNet,
+    'SmallNet3D': SmallNet3D,
+    'OsciAFNet3D': OsciAFNet3D
 }
 
 
 class BasicTrainer(object):
 
-    def __init__(self, model_name, device):
+    def __init__(self, arch_name, device, optimizer_name = 'SGD'):
         super().__init__()
 
-        if model_name not in models.keys():
-            raise ValueError('Unknown model: {}'.format(model_name))
+        if arch_name not in architectures.keys():
+            raise ValueError('Unknown model: {}'.format(arch_name))
 
-        self.model_name = model_name
+        self.arch_name = arch_name
+        self.optimizer_name = optimizer_name
 
         self.device = device
         self.train_summary = {}
 
 
-    def train_model(self, model_args, train_dataloader, val_dataloader, max_epoc = 20, lr = 0.1, momentum = 0.9):
+    def train_model(self, model_args, train_dataloader, val_dataloader, max_epoc = 20, lr = 0.1, momentum = 0.9, weight_decay = 0):
         """Training loop for any model"""
 
-        model = models[self.model_name](**model_args)
-        print(f'Model {self.model_name} loaded, {model}')
+        model = architectures[self.arch_name](**model_args)
+        print(f'Model {self.arch_name} loaded, {model}')
         # Move model to device
         model.to(self.device)
 
@@ -45,7 +51,10 @@ class BasicTrainer(object):
 
         # Initialize loss function and optimizer
         loss_fn = nn.CrossEntropyLoss()
-        optimizer = torch.optim.SGD(model.parameters(), momentum=momentum, lr=lr)
+        if (self.optimizer_name == 'SGD'):
+            optimizer = torch.optim.SGD(model.parameters(), momentum=momentum, lr=lr, weight_decay=weight_decay)
+        else:
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
         for epoch in range(max_epoc):
             print(f'[Epoch {epoch}]')
@@ -126,6 +135,7 @@ class BasicTrainer(object):
             print(
                 f'\tLoss => Train loss: {avg_train_loss:.2f}, Test loss: {avg_val_loss:.2f}, Train Acc: {avg_train_acc:.2f}, Test Acc: {avg_val_acc:.2f}')
 
+        self.model = model
         self.train_summary = {
             'train_losses': train_losses,
             'val_losses': val_losses,
@@ -136,3 +146,6 @@ class BasicTrainer(object):
 
     def get_train_summary(self):
         return self.train_summary
+
+    def get_model(self):
+        return self.model
