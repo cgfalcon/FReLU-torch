@@ -17,7 +17,7 @@ def run_experiment():
             'optimizer': 'SGD',
             'lr': 0.1,
             'momentum': 0.9,
-            'epochs': 10,
+            'epochs': 20,
 
             # Use 20% of train dataset as validation
             'val_ratio': 0.2,

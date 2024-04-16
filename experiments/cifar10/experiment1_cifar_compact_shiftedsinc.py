@@ -1,26 +1,27 @@
 from src.baseexperiment import BaseExperiment
 
 def run_experiment():
+
     exper_configs = {
         # Context
-        'architecture': 'VGG11Net3D',
+        'architecture': 'CompactNet3D',
         'dataset': 'CIFAR10',
 
         'trainer_args': {
             'trainer': 'BasicTrainer',
 
-            'clip_gradients': True,
-            'max_gradients': 3,
+            # 'clip_gradients': True,
+            # 'max_gradients': 3,
 
             # Kfold
             'k_n': 2,
 
             # Optimizer
             'optimizer': 'ADAM',
-            'lr': 0.00001,
+            'lr': 0.001,
             'momentum': 0.9,
             'weight_decay': 0.00001,
-            'epochs': 10,
+            'epochs': 50,
 
             # Use 20% of train dataset as validation
             'val_ratio': 0.2,

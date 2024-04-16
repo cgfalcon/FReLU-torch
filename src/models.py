@@ -330,6 +330,7 @@ class CompactNet(nn.Module):
         )
         self.classifier = nn.Sequential(
             nn.Linear(2304, 512),
+            # nn.Linear(1600, 512),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
 
@@ -341,7 +342,7 @@ class CompactNet(nn.Module):
         x = self.convs_layers(x)
         x = torch.flatten(x, 1)
         x = self.classifier(x)
-        return
+        return x
 
 class CompactNet3D(nn.Module):
     """VGG11Net with 1 input channel"""

@@ -31,7 +31,7 @@ def run_experiment():
             # Activation Function
             'af_name': 'FReLU',
             'af_params': {
-                'frelu_init': -0.39,
+                'frelu_init': -0.3,
                 'inplace': True
             }
         }

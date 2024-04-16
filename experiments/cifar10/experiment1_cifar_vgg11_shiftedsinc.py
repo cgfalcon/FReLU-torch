@@ -10,11 +10,14 @@ def run_experiment():
         'trainer_args': {
             'trainer': 'BasicTrainer',
 
+            'clip_gradients': True,
+            'max_gradients': 5,
+
             # Kfold
             'k_n': 2,
 
             # Optimizer
-            'optimizer': 'ADAM',
+            'optimizer': 'SGD',
             'lr': 0.001,
             'momentum': 0.9,
             'weight_decay': 0.00001,
