@@ -313,6 +313,8 @@ class KFoldTrainer(BasicTrainer):
             print(f'Fold: {fold_n}, Train Batches: {len(train_dataloader)}, Val Batches: {len(val_dataloader)}')
 
             model = architectures[self.arch_name](**model_args)
+            print(f'Model {self.arch_name} loaded, {model}')
+
             model.to(self.device)
             if self.optimizer_name == 'SGD':
                 optimizer = torch.optim.SGD(model.parameters(), momentum=self.momentum, lr=self.lr, weight_decay=self.weight_decay)
