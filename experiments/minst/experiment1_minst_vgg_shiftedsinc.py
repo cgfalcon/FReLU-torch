@@ -3,11 +3,11 @@ from src.baseexperiment import BaseExperiment
 def run_experiment():
     exper_configs = {
         # Context
-        'architecture': 'VGG11Net3D',
-        'dataset': 'CIFAR10',
+        'architecture': 'VGG11Net',
+        'dataset': 'MINST',
 
         'trainer_args': {
-            'trainer': 'BasicTrainer',
+            'trainer': 'KFoldTrainer',
 
             'clip_gradients': True,
             'max_gradients': 3,
@@ -17,7 +17,7 @@ def run_experiment():
 
             # Optimizer
             'optimizer': 'ADAM',
-            'lr': 0.00001,
+            'lr': 0.0001,
             'momentum': 0.9,
             'weight_decay': 0.00001,
             'epochs': 20,

@@ -4,7 +4,7 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'VGG11Net',
+        'architecture': 'CompactNet',
         'dataset': 'MINST',
 
         'trainer_args': {
@@ -21,10 +21,6 @@ def run_experiment():
             'lr': 0.0001,
             'momentum': 0.9,
             'weight_decay': 0.00001,
-            # 'optimizer': 'SGD',
-            # 'lr': 0.01,
-            # 'momentum': 0.9,
-            # 'weight_decay': 0.00001,
             'epochs': 20,
 
             # Use 20% of train dataset as validation
@@ -37,7 +33,7 @@ def run_experiment():
         # Model params
         'model_args': {
             # Activation Function
-            'af_name': 'GCU',
+            'af_name': 'ShiftedSincUnit',
             'af_params': {
             }
         }

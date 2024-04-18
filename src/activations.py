@@ -89,7 +89,7 @@ class ADA(nn.Module):
 
 class Swish(nn.Module):
 
-    def __init__(self, alpha=0.5):
+    def __init__(self, alpha=1):
         super(Swish, self).__init__()
         self.alpha = alpha
 

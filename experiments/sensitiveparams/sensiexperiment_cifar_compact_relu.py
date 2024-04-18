@@ -1,11 +1,21 @@
-from src.baseexperiment import BaseExperiment
+import torch
+
+from src.baseexperiment import BaseExperiment, SensitiveExperiment
 
 def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'VGG11Net3D',
+        'architecture': 'CompactNet3D',
         'dataset': 'CIFAR10',
+
+        # sensitive params - lr
+        'sensitive_param': 'lr',
+        'sensitive_param_range': torch.logspace(start=-1, end=-3, steps=3),
+
+        # sensitive params - alpha
+        # 'sensitive_param': 'alpha',
+        # 'sensitive_param_range': torch.arange(0.3, 0.6, 0.1),
 
         'trainer_args': {
             'trainer': 'BasicTrainer',
@@ -17,10 +27,10 @@ def run_experiment():
             'k_n': 2,
 
             # Optimizer
-            'optimizer': 'ADAM',
-            'lr': 0.0001,
+            'optimizer': 'SGD',
+            'lr': 0.01,
             'momentum': 0.9,
-            'weight_decay': 0.00001,
+            # 'weight_decay': 0.00001,
             'epochs': 50,
 
             # Use 20% of train dataset as validation
@@ -33,13 +43,15 @@ def run_experiment():
         # Model params
         'model_args': {
             # Activation Function
-            'af_name': 'GCU',
+            'af_name': 'ReLU',
             'af_params': {
+                'inplace': True
+                # 'alpha': 0.5
             }
         }
     }
 
-    expr = BaseExperiment(exper_configs=exper_configs)
+    expr = SensitiveExperiment(exper_configs=exper_configs)
     expr.run_experiment()
 
 if __name__ == '__main__':

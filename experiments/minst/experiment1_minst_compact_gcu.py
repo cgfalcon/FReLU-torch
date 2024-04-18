@@ -4,7 +4,7 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'VGG11Net',
+        'architecture': 'CompactNet',
         'dataset': 'MINST',
 
         'trainer_args': {

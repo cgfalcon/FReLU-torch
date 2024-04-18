@@ -15,7 +15,7 @@ def run_experiment():
 
             # Optimizer
             'optimizer': 'SGD',
-            'lr': 0.1,
+            'lr': 0.01,
             'momentum': 0.9,
             'epochs': 20,
 

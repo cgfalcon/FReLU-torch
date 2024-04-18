@@ -17,10 +17,14 @@ def run_experiment():
             'k_n': 2,
 
             # Optimizer
-            'optimizer': 'SGD',
-            'lr': 0.01,
+            'optimizer': 'ADAM',
+            'lr': 0.0001,
             'momentum': 0.9,
             'weight_decay': 0.00001,
+            # 'optimizer': 'SGD',
+            # 'lr': 0.01,
+            # 'momentum': 0.9,
+            # 'weight_decay': 0.00001,
             'epochs': 20,
 
             # Use 20% of train dataset as validation

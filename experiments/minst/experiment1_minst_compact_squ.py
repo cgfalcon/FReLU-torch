@@ -4,7 +4,7 @@ def run_experiment():
 
     exper_configs = {
         # Context
-        'architecture': 'VGG11Net',
+        'architecture': 'CompactNet',
         'dataset': 'MINST',
 
         'trainer_args': {
@@ -37,7 +37,7 @@ def run_experiment():
         # Model params
         'model_args': {
             # Activation Function
-            'af_name': 'GCU',
+            'af_name': 'ShiftedQuadraticUnit',
             'af_params': {
             }
         }

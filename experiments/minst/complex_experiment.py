@@ -2,7 +2,8 @@ from src.baseexperiment import BaseExperiment
 
 def run_experiment():
 
-    exper_configs = {
+    exper_configs = [
+        {
         # Context
         'architecture': 'VGG11Net',
         'dataset': 'MINST',
@@ -42,9 +43,17 @@ def run_experiment():
             }
         }
     }
+    ]
 
-    expr = BaseExperiment(exper_configs=exper_configs)
-    expr.run_experiment()
+    for epr in exper_configs:
+        model_args = epr['model_args']
+        af = model_args['af_name']
+        print(f'===== [{af}] ===')
+        expr = BaseExperiment(exper_configs=epr)
+        try:
+            expr.run_experiment()
+        except Exception as e:
+            print(f'Failed: {af}, {e}')
 
 if __name__ == '__main__':
     run_experiment()

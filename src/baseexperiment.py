@@ -94,8 +94,8 @@ class BaseExperiment(object):
 
         expr_key = datetime.now().strftime('%Y%m%d%H%M')
 
-        trainer_name = self.trainer_args['trainer']
         tr_key = 'BT'
+        trainer_name = self.trainer_args['trainer']
         if trainer_name == 'KFoldTrainer':
             trainer = KFoldTrainer(self.arch_name, self.device, self.trainer_args)
             tr_key = '[KF]'
@@ -105,8 +105,6 @@ class BaseExperiment(object):
 
         expr_name = f"{tr_key}-{self.dataset_name}-{self.arch_name}-{self.af_name}-{expr_key}"
         print(f'\tExperiment[{expr_name}] is running')
-
-
 
         wandb.init(
             # Set the project where this run will be logged
@@ -124,15 +122,125 @@ class BaseExperiment(object):
         wandb.define_metric('testing/test_loss', step_metric="epoch")
         wandb.define_metric('testing/test_acc', step_metric="epoch")
 
-
         model_args = self.exper_configs['model_args']
 
-        # try:
-        trainer.train_model(model_args, self.train)
-
-        trainer.test_model(self.test)
-
-        wandb.finish()
+        self._do_experiment(trainer, model_args)
         # except Exception as e:
         #     print(f'Experiment failed with exception, \n {e}')
         #     wandb.finish()
+
+        wandb.finish()
+
+    def _do_experiment(self,  trainer, model_args):
+        # try:
+        trainer.train_model(model_args, self.train)
+
+        return trainer.test_model(self.test)
+
+
+class SensitiveExperiment(BaseExperiment):
+
+    def __init__(self, exper_configs):
+        super().__init__(exper_configs)
+
+        self._check_sensitive_params(exper_configs)
+        self.sensitive_param = exper_configs['sensitive_param']
+        self.sensitive_param_range = exper_configs['sensitive_param_range']
+
+        model_args = self.exper_configs['model_args']
+        self.af_name = model_args['af_name']
+
+    def _check_sensitive_params(self, exper_configs):
+        if 'sensitive_param' not in exper_configs:
+            raise ValueError('Missing param: sensitive_param')
+
+        if 'sensitive_param_range' not in exper_configs:
+            raise ValueError('Missing param: sensitive_param_range')
+
+        sensitive_param_range = exper_configs['sensitive_param_range']
+        if not isinstance(sensitive_param_range, torch.Tensor):
+            raise ValueError('sensitive_param_range should be a torch.Tensor')
+
+    def run_experiment(self):
+        wandb.login()
+
+        param_acc = {}
+
+        for pr in self.sensitive_param_range:
+            print(f'Sensitive param {self.sensitive_param} with value: {pr}')
+
+            model_args = self.exper_configs['model_args']
+            trainer_args = self.exper_configs['trainer_args']
+
+            # Update config
+            if self.sensitive_param == 'lr':
+                trainer_args['lr'] = pr
+                print(f'Trainer updated configs:')
+                print(trainer_args)
+            else:
+                af_args = model_args['af_params']
+                af_args[self.sensitive_param] = pr
+                print(f'Model updated configs:')
+                print(model_args)
+
+            expr_key = datetime.now().strftime('%Y%m%d%H%M')
+
+            tr_key = 'BT'
+            trainer_name = self.trainer_args['trainer']
+            if trainer_name == 'KFoldTrainer':
+                trainer = KFoldTrainer(self.arch_name, self.device, self.trainer_args)
+                tr_key = '[KF]'
+            else:
+                trainer = BasicTrainer(self.arch_name, self.device, self.trainer_args)
+                tr_key = '[BT]'
+
+            expr_name = f"{self.sensitive_param}[{pr:.2f}]-{self.af_name}-{self.dataset_name}-{self.arch_name}-{expr_key}"
+            print(f'\tSensitive Experiment[{expr_name}] is running')
+
+            wandb.init(
+                # Set the project where this run will be logged
+                project='SensiParams',
+                # We pass a run name (otherwise it’ll be randomly assigned, like sunshine-lollypop-10)
+                name=expr_name,
+                # Track hyperparameters and run metadata
+                config={**self.exper_configs},
+                group=f'Sensitive-{self.af_name}-{self.sensitive_param}'
+            )
+
+            wandb.define_metric("epoch")
+            wandb.define_metric('training/train_loss', step_metric="epoch")
+            wandb.define_metric('training/train_acc', step_metric="epoch")
+            wandb.define_metric('training/val_loss', step_metric="epoch")
+            wandb.define_metric('training/val_acc', step_metric="epoch")
+            wandb.define_metric('testing/test_loss', step_metric="epoch")
+            wandb.define_metric('testing/test_acc', step_metric="epoch")
+
+            try:
+                pr_test_acc = self._do_experiment(trainer, model_args)
+                param_acc[pr] = pr_test_acc
+                wandb.finish()
+            except Exception as e:
+                print(f'Experiment failed with exception, \n {e}')
+                wandb.finish()
+
+        expr_key = datetime.now().strftime('%Y%m%d%H%M')
+        print(f'Sensitive-{self.af_name}-{self.sensitive_param}-summary-{expr_key}')
+        print(param_acc)
+        #
+        #
+        # # Report Summary
+        # wandb.init(
+        #     # Set the project where this run will be logged
+        #     project='SensiParams',
+        #     # We pass a run name (otherwise it’ll be randomly assigned, like sunshine-lollypop-10)
+        #     name=f'Sensitive-{self.af_name}-{self.sensitive_param}-summary-{expr_key}',
+        #     # Track hyperparameters and run metadata
+        #     config={**self.exper_configs},
+        #     group=f'Sensitive-{self.af_name}-{self.sensitive_param}'
+        # )
+        #
+        # wandb.define_metric(self.sensitive_param)
+        # wandb.define_metric('sensiparam/test_acc', step_metric=self.sensitive_param)
+
+
+

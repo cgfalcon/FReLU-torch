@@ -36,21 +36,18 @@ class BasicTrainer(object):
         # Examine key properties of train args
         self._examine_params(trainer_args)
 
+        # Update args
         self.trainer_args = trainer_args
         self.optimizer_name = self.trainer_args['optimizer']
-
         self.max_epoc = int(self.trainer_args['epochs'])
         self.lr = float(self.trainer_args['lr'])
-
         self.batch_size = int(self.trainer_args['batch_size'])
-
         momentum = self.trainer_args['momentum'] if 'momentum' in self.trainer_args else 0.9
         weight_decay = self.trainer_args['weight_decay'] if 'weight_decay' in self.trainer_args else 0.0
-
         self.momentum = momentum
         self.weight_decay = weight_decay
-
-        self.clip_gradients = False if 'clip_gradients' not in self.trainer_args else self.trainer_args['clip_gradients']
+        self.clip_gradients = False if 'clip_gradients' not in self.trainer_args else self.trainer_args[
+            'clip_gradients']
         self.max_gradients = 5 if 'max_gradients' not in self.trainer_args else self.trainer_args['max_gradients']
 
         # Initialize loss function and optimizer
@@ -67,6 +64,32 @@ class BasicTrainer(object):
         self.device = device
         self.train_summary = {}
         self.test_summary = {}
+
+    def update_args(self, trainer_args):
+        # Examine key properties of train args
+        self._examine_params(trainer_args)
+
+        # Update args
+        self.trainer_args = trainer_args
+        self.optimizer_name = self.trainer_args['optimizer']
+        self.max_epoc = int(self.trainer_args['epochs'])
+        self.lr = float(self.trainer_args['lr'])
+        self.batch_size = int(self.trainer_args['batch_size'])
+        momentum = self.trainer_args['momentum'] if 'momentum' in self.trainer_args else 0.9
+        weight_decay = self.trainer_args['weight_decay'] if 'weight_decay' in self.trainer_args else 0.0
+        self.momentum = momentum
+        self.weight_decay = weight_decay
+        self.clip_gradients = False if 'clip_gradients' not in self.trainer_args else self.trainer_args[
+            'clip_gradients']
+        self.max_gradients = 5 if 'max_gradients' not in self.trainer_args else self.trainer_args['max_gradients']
+
+        print(f'Trainer configs updated: \n')
+        print(f'  arch_name: {self.arch_name}')
+        print(f'  optimizer_name: {self.optimizer_name}')
+        print(f'  max_epoc: {self.max_epoc}')
+        print(f'  lr: {self.lr}')
+        print(f'  momentum: {self.momentum}')
+        print(f'  weight_decay: {self.weight_decay}')
 
     def _examine_params(self, train_args):
         if 'batch_size' not in train_args:
